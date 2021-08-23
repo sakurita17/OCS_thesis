@@ -1,5 +1,5 @@
 ---
-title: "Master's thesis code"
+title: "thesis code"
 author: "Jaime Ortiz"
 date: "7/7/2021"
 output:
@@ -16,7 +16,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Prepare the R environment
 Install and load R packages we need for the exercise, and clean the workplace.
 ```{r, results = 'hide', message = FALSE, warning = FALSE}
-## General Libraries
+
+## General libraries
 library(tidyr)
 library(tidyverse)
 library(gdata)
@@ -29,10 +30,12 @@ library(xlsx)
 library(hausekeep)
 library(ggbeeswarm)
 library(expss)
-# Optimum contribution selection
+
+## Optimal contribution selection
 library(data.table)
 library(optiSel)
-# Plotting Libraries
+
+## Plotting libraries
 library(ggplot2)
 library(ggpubr)
 library(UpSetR)
@@ -41,33 +44,32 @@ library(ComplexHeatmap)
 rm(list = ls())
 ```
 
-## Data description
-Pedigree
-animal: Integer variable. Identification of each animal.
-sire: Integer variable. Identification number of the father. 
-dam: Integer variable. Identification number of the mother. 
+## Data description (ped)
 
-geb_dat: date variable. Date of birth.
-sex: Sex column. 1:Male or 2:Female.
-Basic_Animal:	Character. Identification of base animals.
-NBA: Numeric variables. Number of born alive (number of piglets).	
-DailyGain: Numeric variable. Daily gain (gr/day).	
-Backfat: Numeric variable. Back fat (mm)	
-sem: Numeric variable. Birth semester. Min 19982 to 20182.	
-new_id: Integer variable. Consecutive number to run EVA.	
-par20182: Integer variable. Parents of animals born in 20182.	
-maxunic: Numeric variable. maxmating's number. 1:female and 20:male.
-index:	Numeric variable. selection index, each trait was weighted by 1/3. 
-cohort:	Numeric variable. Cohort based on  birth semester. i.e., cohort 1:19982
-cohort 41:20182.
+Pedigree
+animal: Identification number animal.
+sire: Identification number father. 
+dam: Identification number mother. 
+
+geb_dat: Date of birth.
+sex: Male or Female.
+Basic_Animal:	Identification of base animals.
+NBA: EBV - number of born alive (number of piglets).	
+DailyGain: EBV - numeric variable. Daily gain (gr/day).	
+Backfat: EBV - numeric variable. Back fat (mm)	
+sem: Birth semester from 19982 to 20182.	
+new_id: Consecutive number to run software EVA (Evolutionary algorithms).	
+par20182: Parents of animals born in 20182.	
+maxunic: Maximum number of matings
+index:	Selection index, each trait was weighted by 1/3. 
+cohort:	Number of cohort based on  birth semester (i.e., cohort 1:19982 cohort 41:20182).
 
 ```{r}
-ped = readRDS("D:/Masterthesis/R/output/ped_reduced.rds") # import "ped" as .rd
+ped = readRDS("D:/Masterthesis/R/output/ped_reduced.rds") # Load "ped" previously saved as .rds file 
 ```
 
-## Plots number of animals
-I will plot the number of animals per cohort and the number of founder animal
-per cohort.
+## Figure 2: Plotting the number of animals by cohort
+
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 # Total number of boars and dams per cohort
 tot_count = rbind(count(ped[ped$sex==1,]$cohort),
@@ -121,9 +123,8 @@ ggpubr::ggarrange(tot,un_plot,
 #ggsave(
 #  filename="D:/Masterthesis/graphs/tot_found.png",width=10,height=2*3,dpi=300)
 ```
-## Quality of the pedigree
-The quality of the pedigree was measured by pedigree completeness index (PCI) and
-complete generation equivalent (EqGi). Those values PCI and EqGi were computed in EVA.
+## Table 5 and Figure 3: Quality of the pedigree
+
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 summary_eva_files <- list.files(path = "D:/Masterthesis/R/input/PCI",
                                 pattern = "F_summary.txt$",
@@ -194,10 +195,9 @@ ggarrange(EQ,PCI, labels = c("a","b"), ncol = 1, nrow = 2,
 #ggsave(
 #  filename="D:/Masterthesis/graphs/PCI_Eq.png",width=10,height=2*3,dpi=300)
 ```
-## Generation time
-The genetic response to selection predicts how much better the next generation
-performs compared to the current generation. Tg  was computed as the mean of the
-mean age of dams and boars born in particular year.
+
+## Figure 4: Generation time
+
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 # boars_age
 ped$age_b <- NA
@@ -247,8 +247,9 @@ ggplot(Tg, aes(x = cohort, y = Tg, group = sex))+
 #ggsave(
 #  filename="D:/Masterthesis/graphs/tg.png",width=10,height=2*3,dpi=300)
 ```
-## Average inbreeding, average coancestry and FIS
-These values were computed in EVA.
+
+## Figure 5: Average inbreeding, average coancestry and 𝐹𝐼𝑆
+
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 evaout <- read.table("D:/Masterthesis/R/input/summary.txt", header = T)
 evaout$fix = evaout$avgcoa-1/2/evaout$N # correction of animal coancestry f/2N
@@ -281,9 +282,10 @@ ggplot(inbre_coa, aes(x = cohort, y = value, group = variable))+
 #  filename="D:/Masterthesis/graphs/inbreeding_coancestry.png",
 #  width=10,height=1*3,dpi=300)
 ```
-## Change in FST
-The change in inbreeding Fst was plotted to identify changes in the inbreeding 
-trend in the original population.
+
+
+## Figure 6: Overall changes in 𝐹𝑆𝑇
+
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 df <- data.frame(x1=8,x2=23,y1=0.0001,y2=0.0134,x3=24,x4=41,y3=0.0071,y4=0.0532)
 Fst <- ggplot(evaout, aes(x=Cohort, y=expF))+
@@ -311,8 +313,9 @@ Fst +
 #  filename="D:/Masterthesis/graphs/drift_coeff.png",width=10,height=2*3,dpi=300)
 
 ```
-# Effective population size
-Based on the changes of Fst, the before and after cohort 23 (second half of 2009).
+
+## Effective population size
+
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 # average generation time Line_1 and Line_2
 line_1_year <- c(20021,20022,20031,20032,20041,
@@ -340,7 +343,8 @@ summary(lm(expF ~ Cohort, data = line_2))
 1/((2*0.002642)*((boar_line_2+saw_line_2)/2))
 
 ```
-## Expected breeding values 
+
+## Table 6 and Figure 7: Plotting genetic trend
 
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 ped2 = aggregate(ped[,c(7,8,9)], by = list(ped$cohort), FUN = mean, na.rm = TRUE)
@@ -431,8 +435,9 @@ summary(lm(Backfat ~ cohort, data = ped[ped$cohort > 23,]))
 #                  labels = c("a","b","c"),heights = c(1, 1), ncol = 1, nrow = 3,
 #                  common.legend = TRUE, legend = "bottom")
 ```
-## Scaling traits units
-Breeding values on the natural (phenotypic) scale were provided, NBA in units of piglets, back fat thickness in millimetres and daily gain in units of grams of gain per day. Means and standard deviations of each breeding value within each cohort were estimated. 
+
+## Figure 8: Scaling original traits
+
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 # Filtering animals born in the second half of 2018
 born20182 <- ped[ped$sem == 20182,]
@@ -492,49 +497,9 @@ ggpubr::ggarrange(plot1,plot2,
 #  width=13,height=2*3,dpi=300)
 
 ```
-## Candidates
-```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
-candidates <- list.files(c("D:/Masterthesis/eva/ocs_index/ex1/rep3",
-                           "D:/Masterthesis/eva/ocs_index/ex2/rep3",
-                           "D:/Masterthesis/eva/ocs_index/ex3/rep3",
-                           "D:/Masterthesis/eva/ocs_index/ex4/rep3",
-                           "D:/Masterthesis/eva/ocs_index/ex5",
-                           "D:/Masterthesis/eva/ocs_index/ex6/rep3",
-                           "D:/Masterthesis/eva/ocs_index/ex7/rep3"),
-                           pattern = "candidates.txt$",
-                         all.files = TRUE,
-                         full.names = TRUE ) 
 
-list_names = c("run1","run2","run3","run4","run5","run6","run7")
-candidates_list = list()
-for (i in 1:length(candidates)) {
-  candidates_list[[i]] = read.table(candidates[i], header = T)
-}
+## Table 7: Uncertainty of the model
 
-new_list = list()
-for (i in 1:7) {
-  new_list[[i]] = candidates_list[[i]][candidates_list[[i]]$Sex == 1 & 
-                                         candidates_list[[i]]$N.matings != 0,]  
-}
-
-cand = 
-  left_join(new_list[[1]][,c(1,3)], new_list[[2]][,c(1,3)], by="ID") %>% 
-  left_join(., new_list[[3]][,c(1,3)], by="ID") %>%
-  left_join(., new_list[[4]][,c(1,3)], by="ID") %>%
-  left_join(., new_list[[5]][,c(1,3)], by="ID") %>%
-  left_join(., new_list[[6]][,c(1,3)], by="ID") %>%
-  left_join(., new_list[[7]][,c(1,3)], by="ID") 
-
-colnames(cand) = c("id","uno","dos","tres","cuatro","cinco","seis","siete")
-cand$index <- ped[ped$animal %in% unique(cand$id),]$index
-
-head(cand)
-
-#write.xlsx(cand, file = "D:/Masterthesis/graphs/cand.xlsx", 
-#           sheetName="cand", append=TRUE)
-```
-## Uncertainty
-One scenario was arbitrarily selected to quantify the uncertainty of the method, the scenario was run five time in EVA, two variables were compared; EBV and F of the offspring from mating between sire and dam -both variables are inputs in eva_MatingList.txt.   
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 uncer <- function(ex){
   ex_list <- list()
@@ -578,9 +543,48 @@ ex1 <- list.files(c("D:/Masterthesis/eva/ocs_index/ex1/rep1",
 uncer(ex1)
 ```
 
-## Number of selected animals
+## Table 8: Selected boars per mating and per scenario from 40 boars candidates
 
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
+candidates <- list.files(c("D:/Masterthesis/eva/ocs_index/ex1/rep3",
+                           "D:/Masterthesis/eva/ocs_index/ex2/rep3",
+                           "D:/Masterthesis/eva/ocs_index/ex3/rep3",
+                           "D:/Masterthesis/eva/ocs_index/ex4/rep3",
+                           "D:/Masterthesis/eva/ocs_index/ex5",
+                           "D:/Masterthesis/eva/ocs_index/ex6/rep3",
+                           "D:/Masterthesis/eva/ocs_index/ex7/rep3"),
+                           pattern = "candidates.txt$",
+                         all.files = TRUE,
+                         full.names = TRUE ) 
+
+list_names = c("run1","run2","run3","run4","run5","run6","run7")
+candidates_list = list()
+for (i in 1:length(candidates)) {
+  candidates_list[[i]] = read.table(candidates[i], header = T)
+}
+
+new_list = list()
+for (i in 1:7) {
+  new_list[[i]] = candidates_list[[i]][candidates_list[[i]]$Sex == 1 & 
+                                         candidates_list[[i]]$N.matings != 0,]  
+}
+
+cand = 
+  left_join(new_list[[1]][,c(1,3)], new_list[[2]][,c(1,3)], by="ID") %>% 
+  left_join(., new_list[[3]][,c(1,3)], by="ID") %>%
+  left_join(., new_list[[4]][,c(1,3)], by="ID") %>%
+  left_join(., new_list[[5]][,c(1,3)], by="ID") %>%
+  left_join(., new_list[[6]][,c(1,3)], by="ID") %>%
+  left_join(., new_list[[7]][,c(1,3)], by="ID") 
+
+colnames(cand) = c("id","uno","dos","tres","cuatro","cinco","seis","siete")
+cand$index <- ped[ped$animal %in% unique(cand$id),]$index
+
+head(cand)
+
+#write.xlsx(cand, file = "D:/Masterthesis/graphs/cand.xlsx", 
+#           sheetName="cand", append=TRUE)
+```
 matings_output<-list.files(c("D:/Masterthesis/eva/ocs_index/ex1/rep3",
                              "D:/Masterthesis/eva/ocs_index/ex2/rep3",
                              "D:/Masterthesis/eva/ocs_index/ex3/rep3",
@@ -609,12 +613,9 @@ number <- c(length(unique(ocs_output_matings[[1]]$Sire)),
 tibble(scenario,number)
 ```
 
-# Upset plot function (author)
+## Upset plot function
+
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
-######## Comparison of the mating 
-# list of unique matings or males
-# path where the plot is going to stay
-# x = vector of breaks for the bar plot, stating with 0
 
 comparison <- function(list,x){
   # plot general mating
@@ -677,7 +678,7 @@ comparison <- function(list,x){
 }
 ```
 
-## Upset plot - selected boars
+Figure 9: Upset plot - selected boars
 
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 matings_output<-list.files(c("D:/Masterthesis/eva/ocs_index/ex1/rep3",
@@ -702,7 +703,7 @@ comparison(unique_male,y)
 
 ```
 
-## Upset plot - complete mating
+Figure 10: Upset plot complete mating (boar*dam)
 
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 matings_output<-list.files(c("D:/Masterthesis/eva/ocs_index/ex1/rep3",
@@ -737,100 +738,9 @@ comparison(unique_list,x)
 #dev.off()
 
 ```
-## List number of mating per selected boar 
 
-```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
-matings_output <- list.files(c("D:/Masterthesis/eva/ocs_index/ex1/rep3",
-                               "D:/Masterthesis/eva/ocs_index/ex2/rep3",
-                               "D:/Masterthesis/eva/ocs_index/ex3/rep3",
-                               "D:/Masterthesis/eva/ocs_index/ex4/rep3",
-                               "D:/Masterthesis/eva/ocs_index/ex5",
-                               "D:/Masterthesis/eva/ocs_index/ex6/rep3",
-                               "D:/Masterthesis/eva/ocs_index/ex7/rep3"),
-                             pattern = "MatingList.txt$",
-                             all.files = TRUE,
-                             full.names = TRUE ) 
-list_names <- c('run1','run2','run3','run4','run5','run6','run7')
-ocs_output_matings <- list()
-for (i in 1:length(matings_output)){
-  ocs_output_matings[[i]] <- read.table(matings_output[i], header = T)
-}
-names(ocs_output_matings) <- list_names
+Figure 11: Selection differential
 
-index <- unique(c(ocs_output_matings[[1]]$Sire,
-                  ocs_output_matings[[2]]$Sire,
-                  ocs_output_matings[[3]]$Sire,
-                  ocs_output_matings[[4]]$Sire,
-                  ocs_output_matings[[5]]$Sire,
-                  ocs_output_matings[[6]]$Sire,
-                  ocs_output_matings[[7]]$Sire))
-
-index <- ped[ped$animal %in% unique(c(ocs_output_matings[[1]]$Sire,
-                                      ocs_output_matings[[2]]$Sire,
-                                      ocs_output_matings[[3]]$Sire,
-                                      ocs_output_matings[[4]]$Sire,
-                                      ocs_output_matings[[5]]$Sire,
-                                      ocs_output_matings[[6]]$Sire,
-                                      ocs_output_matings[[7]]$Sire))
-             ,c(1,14)]
-colnames(index) <- c("Var1","index")
-
-contribution <- Reduce(function(...) merge(..., by = c('Var1'), all=TRUE), list(
-  index,
-  data.frame(table(ocs_output_matings[[1]]$Sire)),
-  data.frame(table(ocs_output_matings[[2]]$Sire)),
-  data.frame(table(ocs_output_matings[[3]]$Sire)),
-  data.frame(table(ocs_output_matings[[4]]$Sire)),
-  data.frame(table(ocs_output_matings[[5]]$Sire)),
-  data.frame(table(ocs_output_matings[[6]]$Sire)),
-  data.frame(table(ocs_output_matings[[7]]$Sire))))
-
-colnames(contribution) <- c("boar","index","(1,0)","(1,-100)","(1,-300)",
-                            "(1,-1000)",("1,-3000"),"(1,-10000)",
-                            "(0,-1)")
-
-contribution <- contribution[order(-contribution$index),]
-```
-
-## genetic trend selected boars
-```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
-boar_trend <-  function(list,ped){
-  
-  list_names <- c("run1","run2","run3","run4","run5","run6","run7")
-  ocs_output_matings <- list()
-  for (i in 1:length(matings_output)) {
-    ocs_output_matings[[i]] <- read.table(matings_output[i], header = T)
-  }
-  names(ocs_output_matings) <- list_names
-  
-  nba_mean <- rep(NA,7)
-  nba_sd <- rep(NA,7)
-  dg_mean <- rep(NA,7)
-  dg_sd <- rep(NA,7)
-  bf_mean <- rep(NA,7)
-  bf_sd <- rep(NA,7)
-  for (i in 1:7) {
-    nba_mean[i] <- mean(ped[ped$animal %in% unique(ocs_output_matings[[i]]$Sire),]$NBA)
-    nba_sd[i] <- sd(ped[ped$animal %in% unique(ocs_output_matings[[i]]$Sire),]$NBA)
-    
-    dg_mean[i] <- mean(ped[ped$animal %in% unique(ocs_output_matings[[i]]$Sire),]$DailyGain)
-    dg_sd[i] <- sd(ped[ped$animal %in% unique(ocs_output_matings[[i]]$Sire),]$DailyGain)
-    
-    bf_mean[i] <- mean(ped[ped$animal %in% unique(ocs_output_matings[[i]]$Sire),]$Backfat)
-    bf_sd[i] <- sd(ped[ped$animal %in% unique(ocs_output_matings[[i]]$Sire),]$Backfat)
-  }
-  
-  boar_trend <- data.frame(
-    nba_mean, nba_sd, dg_mean, dg_sd, bf_mean, bf_sd 
-  )
-  print(boar_trend)
-}
-
-boar_trend(matings_output, ped)
-
-```
-
-## Selection differential
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 eff.diff <- function(eva_mat, ped , x = 1, y = 2, sem = 20182){
   diff      <- as.data.frame(table(eva_mat[x]))
@@ -906,7 +816,7 @@ ggplot(
 
 ```
 
-## Rate of inbreeding and change in average coancestry
+Figure 12: Rate of inbreeding and change in average coancestry
 
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 evacoeff <- read.table("D:/Masterthesis/R/input/evacoeff.txt", header = T) # this is an outcome from EVA to make quality graphs
@@ -990,7 +900,9 @@ p1
 
 ```
 
-## Differential selection per average coancestry
+
+Figure 13: Differential selection per average coancestry
+
 
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 scenario <- c('1,0','1,-100','1,-300','1,-1000','1,-3000','1,-10000','0,-1')
@@ -1023,8 +935,6 @@ ggplot(
 #  filename=
 #    "D:/Masterthesis/graphs/diff.sel.per.coanc.png",
 #  width=15,height=2*3,dpi=300)
-
-```
 
 ## Quadratic model
 
