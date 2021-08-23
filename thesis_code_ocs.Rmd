@@ -660,7 +660,7 @@ comparison <- function(list,x){
 }
 ```
 
-Figure 9: Upset plot - selected boars
+## Figure 9: Upset plot - selected boars
 
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 matings_output<-list.files(c("D:/Masterthesis/eva/ocs_index/ex1/rep3",
@@ -685,7 +685,7 @@ comparison(unique_male,y)
 
 ```
 
-Figure 10: Upset plot complete mating (boar*dam)
+## Figure 10: Upset plot complete mating (boar*dam)
 
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 matings_output<-list.files(c("D:/Masterthesis/eva/ocs_index/ex1/rep3",
@@ -721,7 +721,7 @@ comparison(unique_list,x)
 
 ```
 
-Figure 11: Selection differential
+## Figure 11: Selection differential
 
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 eff.diff <- function(eva_mat, ped , x = 1, y = 2, sem = 20182){
@@ -797,7 +797,7 @@ ggplot(
 #  width=15,height=2*3,dpi=300)
 ```
 
-Figure 12: Rate of inbreeding and change in average coancestry
+## Figure 12: Rate of inbreeding and change in average coancestry
 
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 evacoeff <- read.table("D:/Masterthesis/R/input/evacoeff.txt", header = T) # this is an outcome from EVA to make quality graphs
@@ -877,7 +877,7 @@ p1
 ggsave(filename='D:/Masterthesis/graphs/delta_rel_index_full.png', width=10, height=2*3, dpi=300)
 ```
 
-Figure 13: Differential selection per average coancestry
+## Figure 13: Differential selection per average coancestry
 
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 scenario <- c('1,0','1,-100','1,-300','1,-1000','1,-3000','1,-10000','0,-1')
