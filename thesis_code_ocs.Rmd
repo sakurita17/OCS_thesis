@@ -65,17 +65,17 @@ index:	Selection index, each trait was weighted by 1/3.
 cohort:	Number of cohort based on  birth semester (i.e., cohort 1:19982 cohort 41:20182).
 
 ```{r}
-ped = readRDS("D:/Masterthesis/R/output/ped_reduced.rds") # Load "ped" previously saved as .rds file 
+ped <- readRDS("D:/Masterthesis/R/output/ped_reduced.rds") # Load "ped" previously saved as .rds file 
 ```
 
 ## Figure 2: Plotting the number of animals by cohort
 
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 # Total number of boars and dams per cohort
-tot_count = rbind(count(ped[ped$sex==1,]$cohort),
+tot_count  rbind(count(ped[ped$sex==1,]$cohort),
                    count(ped[ped$sex==2,]$cohort))
-tot_count$sex = rep(c("boar","dam"), each = 41)
-tot = ggplot(tot_count, aes(x=x,y=freq, group=sex))+
+tot_count$sex <- rep(c("boar","dam"), each = 41)
+tot <- ggplot(tot_count, aes(x=x,y=freq, group=sex))+
   geom_line(aes(color=sex), size = 1)+
   geom_point(aes(color=sex), size = 1.5)+
   scale_color_manual(values=c("yellowgreen", "blue"))+
@@ -93,14 +93,14 @@ tot = ggplot(tot_count, aes(x=x,y=freq, group=sex))+
         panel.grid.minor = element_line(colour = NA))
 
 # Total number of founder animals per cohort
-unknown = ped[ped$sire == 0 & ped$dam == 0,]
-unknown = as.data.frame(
+unknown <- ped[ped$sire == 0 & ped$dam == 0,]
+unknown <- as.data.frame(
   aggregate(unknown$animal, list(unknown$cohort,unknown$sex),
             FUN = length)
 )
-unknown$Group.2 = ifelse(unknown$Group.2 == 1, "boar", "dam")
-colnames(unknown) = c("cohort", "sex", "count")
-un_plot = ggplot(unknown, aes(x = cohort, y = count, group = sex))+
+unknown$Group.2 <- ifelse(unknown$Group.2 == 1, "boar", "dam")
+colnames(unknown) <- c("cohort", "sex", "count")
+un_plot <- ggplot(unknown, aes(x = cohort, y = count, group = sex))+
   geom_line(aes(color = sex), size = 1)+
   geom_point(aes(color = sex), size = 1.5)+
   scale_color_manual(values = c("yellowgreen", "blue"))+
@@ -120,9 +120,9 @@ un_plot = ggplot(unknown, aes(x = cohort, y = count, group = sex))+
 ggpubr::ggarrange(tot,un_plot,
                   labels = c("a","b"),heights = c(1, 1), ncol = 1, nrow = 2,
                   common.legend = TRUE, legend = "bottom")
-#ggsave(
-#  filename="D:/Masterthesis/graphs/tot_found.png",width=10,height=2*3,dpi=300)
+#ggsave(filename = "D:/Masterthesis/graphs/tot_found.png",width=10,height=2*3,dpi=300)
 ```
+
 ## Table 5 and Figure 3: Quality of the pedigree
 
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
@@ -151,7 +151,6 @@ summary_gen$cohort <- 1:nrow(summary_gen)
 
 ## Correlation PCI - Eq
 round(cor(summary_gen[,c(3:8)],summary_gen$gen1.Gencoef),digits = 2)
-
 
 ## PCI by generation six generation
 PCI <- ggplot(summary_gen, aes(x = sem, y = PCI, group = depth))+
@@ -192,8 +191,7 @@ EQ <- ggplot(summary_gen[summary_gen$depth == "PCI1",],
 
 ggarrange(EQ,PCI, labels = c("a","b"), ncol = 1, nrow = 2,
           common.legend = TRUE, legend = "bottom")
-#ggsave(
-#  filename="D:/Masterthesis/graphs/PCI_Eq.png",width=10,height=2*3,dpi=300)
+#ggsave(filename = "D:/Masterthesis/graphs/PCI_Eq.png",width=10,height=2*3,dpi=300)
 ```
 
 ## Figure 4: Generation time
@@ -244,16 +242,15 @@ ggplot(Tg, aes(x = cohort, y = Tg, group = sex))+
         panel.grid.major = element_line(colour = "gray85"),
         panel.grid.minor = element_line(colour = NA))
 
-#ggsave(
-#  filename="D:/Masterthesis/graphs/tg.png",width=10,height=2*3,dpi=300)
+#ggsave(filename = "D:/Masterthesis/graphs/tg.png",width=10,height=2*3,dpi=300)
 ```
 
 ## Figure 5: Average inbreeding, average coancestry and 𝐹𝐼𝑆
 
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 evaout <- read.table("D:/Masterthesis/R/input/summary.txt", header = T)
-evaout$fix = evaout$avgcoa-1/2/evaout$N # correction of animal coancestry f/2N
-evaout$Cohort = 1:nrow(evaout)
+evaout$fix <- evaout$avgcoa-1/2/evaout$N # correction of animal coancestry f/2N
+evaout$Cohort <- 1:nrow(evaout)
 
 inbre_coa <- evaout[,c(4,8,12)]
 colnames(inbre_coa) <- c("Average inbreeding","FIS", "Average coancestry")
@@ -278,11 +275,8 @@ ggplot(inbre_coa, aes(x = cohort, y = value, group = variable))+
         panel.grid.major = element_line(colour = "gray85"),
         panel.grid.minor = element_line(colour = NA))
 
-#ggsave(
-#  filename="D:/Masterthesis/graphs/inbreeding_coancestry.png",
-#  width=10,height=1*3,dpi=300)
+#ggsave(filename = "D:/Masterthesis/graphs/inbreeding_coancestry.png", width=10,height=1*3,dpi=300)
 ```
-
 
 ## Figure 6: Overall changes in 𝐹𝑆𝑇
 
@@ -309,8 +303,7 @@ Fst +
                data = df, size = 1.5, color="yellowgreen")+
   geom_segment(aes(x = x3, y = y3, xend = x4, yend = y4, colour = "segment"),
                data = df, size = 1.5, color="blue")
-#ggsave(
-#  filename="D:/Masterthesis/graphs/drift_coeff.png",width=10,height=2*3,dpi=300)
+#ggsave(filename = "D:/Masterthesis/graphs/drift_coeff.png",width=10,height=2*3,dpi=300)
 
 ```
 
@@ -349,11 +342,7 @@ summary(lm(expF ~ Cohort, data = line_2))
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 ped2 = aggregate(ped[,c(7,8,9)], by = list(ped$cohort), FUN = mean, na.rm = TRUE)
 ped2[ped2$Group.1 == c(1,23,24,41),]
-```
 
-
-
-```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 ebv <- function(data,x,cut){
   ebv_summary <- seWithin(data = data,
                           measurevar = c("trait"),
@@ -431,9 +420,7 @@ plt_bf +
 summary(lm(Backfat ~ cohort, data = ped[ped$cohort <= 23,]))
 summary(lm(Backfat ~ cohort, data = ped[ped$cohort > 23,]))
 
-#ggpubr::ggarrange(plt_nba,plt_dg,plt_bf,
-#                  labels = c("a","b","c"),heights = c(1, 1), ncol = 1, nrow = 3,
-#                  common.legend = TRUE, legend = "bottom")
+#ggpubr::ggarrange(plt_nba,plt_dg,plt_bf, labels = c("a","b","c"),heights = c(1, 1), ncol = 1, nrow = 3, common.legend = TRUE, legend = "bottom")
 ```
 
 ## Figure 8: Scaling original traits
@@ -442,12 +429,10 @@ summary(lm(Backfat ~ cohort, data = ped[ped$cohort > 23,]))
 # Filtering animals born in the second half of 2018
 born20182 <- ped[ped$sem == 20182,]
 # Scaling original values
-ped$NBA_scal <- 
-  (ped$NBA)/sd(ped[ped$animal%in%unique(c(born20182$sire,born20182$dam)),]$NBA)
-ped$Daygain_scal <- 
-  (ped$DailyGain)/sd(ped[ped$animal%in%unique(c(born20182$sire,born20182$dam)),]$DailyGain)
-ped$Backfat_scal <- 
-  (ped$Backfat)/sd(ped[ped$animal%in%unique(c(born20182$sire,born20182$dam)),]$Backfat)
+ped$NBA_scal <- (ped$NBA)/sd(ped[ped$animal%in%unique(c(born20182$sire,born20182$dam)),]$NBA)
+ped$Daygain_scal <- (ped$DailyGain)/sd(ped[ped$animal%in%unique(c(born20182$sire,born20182$dam)),]$DailyGain)
+ped$Backfat_scal <- (ped$Backfat)/sd(ped[ped$animal%in%unique(c(born20182$sire,born20182$dam)),]$Backfat)
+
 # values before scaling
 ped_before_scaling <- ped[,c(1,7,8,9)]
 colnames(ped_before_scaling) <- c("animal","NBA","Daily Gain","Backfat")  
@@ -492,9 +477,7 @@ plot2 <- ped_after_scaling %>%
 ggpubr::ggarrange(plot1,plot2,
                   labels = c("a","b"),heights = c(1, 1), ncol = 1, nrow = 2,
                   common.legend = TRUE, legend = "bottom")
-#ggsave(filename=
-#    "D:/Masterthesis/graphs/before_after_scaling1.png",
-#  width=13,height=2*3,dpi=300)
+ggsave(filename = "D:/Masterthesis/graphs/before_after_scaling1.png", width=13,height=2*3,dpi=300)
 
 ```
 
@@ -557,19 +540,19 @@ candidates <- list.files(c("D:/Masterthesis/eva/ocs_index/ex1/rep3",
                          all.files = TRUE,
                          full.names = TRUE ) 
 
-list_names = c("run1","run2","run3","run4","run5","run6","run7")
-candidates_list = list()
+list_names <- c("run1","run2","run3","run4","run5","run6","run7")
+candidates_list <- list()
 for (i in 1:length(candidates)) {
-  candidates_list[[i]] = read.table(candidates[i], header = T)
+  candidates_list[[i]] <- read.table(candidates[i], header = T)
 }
 
-new_list = list()
+new_list <- list()
 for (i in 1:7) {
-  new_list[[i]] = candidates_list[[i]][candidates_list[[i]]$Sex == 1 & 
+  new_list[[i]] <- candidates_list[[i]][candidates_list[[i]]$Sex == 1 & 
                                          candidates_list[[i]]$N.matings != 0,]  
 }
 
-cand = 
+cand <- 
   left_join(new_list[[1]][,c(1,3)], new_list[[2]][,c(1,3)], by="ID") %>% 
   left_join(., new_list[[3]][,c(1,3)], by="ID") %>%
   left_join(., new_list[[4]][,c(1,3)], by="ID") %>%
@@ -577,14 +560,13 @@ cand =
   left_join(., new_list[[6]][,c(1,3)], by="ID") %>%
   left_join(., new_list[[7]][,c(1,3)], by="ID") 
 
-colnames(cand) = c("id","uno","dos","tres","cuatro","cinco","seis","siete")
+colnames(cand) <- c("id","uno","dos","tres","cuatro","cinco","seis","siete")
 cand$index <- ped[ped$animal %in% unique(cand$id),]$index
 
 head(cand)
 
-#write.xlsx(cand, file = "D:/Masterthesis/graphs/cand.xlsx", 
-#           sheetName="cand", append=TRUE)
-```
+write.xlsx(cand, file = "D:/Masterthesis/graphs/cand.xlsx", sheetName="cand", append=TRUE)
+
 matings_output<-list.files(c("D:/Masterthesis/eva/ocs_index/ex1/rep3",
                              "D:/Masterthesis/eva/ocs_index/ex2/rep3",
                              "D:/Masterthesis/eva/ocs_index/ex3/rep3",
@@ -813,7 +795,6 @@ ggplot(
 #  filename=
 #    "D:/Masterthesis/graphs/diff.sel_index.png",
 #  width=15,height=2*3,dpi=300)
-
 ```
 
 Figure 12: Rate of inbreeding and change in average coancestry
@@ -893,16 +874,10 @@ p1 <- ggplot(data = ocs_index, aes(x=run, y = value, fill = variable))+
     panel.grid.minor = element_line(colour = NA))
 p1
 
-#ggsave(filename='D:/Masterthesis/graphs/delta_rel_index_full.png',
-#       width=10,
-#       height=2*3,
-#       dpi=300)
-
+ggsave(filename='D:/Masterthesis/graphs/delta_rel_index_full.png', width=10, height=2*3, dpi=300)
 ```
 
-
 Figure 13: Differential selection per average coancestry
-
 
 ```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 scenario <- c('1,0','1,-100','1,-300','1,-1000','1,-3000','1,-10000','0,-1')
@@ -931,14 +906,10 @@ ggplot(
         panel.grid.major = element_line(colour = "gray85"),
         panel.grid.minor = element_line(colour = NA))
 
-#ggsave(
-#  filename=
-#    "D:/Masterthesis/graphs/diff.sel.per.coanc.png",
-#  width=15,height=2*3,dpi=300)
+ggsave(filename="D:/Masterthesis/graphs/diff.sel.per.coanc.png", width=15,height=2*3,dpi=300)
 
 ## Quadratic model
 
-```{r, results="hide", fig.show="hide", message = FALSE, warning = FALSE}
 scenario <- c('1,0','1,-100','1,-300','1,-1000','1,-3000','1,-10000','0,-1')
 coa <- c(1.68,1.68,1.65,1.63,1.27,0.82,0.85)
 diff <- c(0.61,0.61,0.61,0.61,0.49,0.11,-0.014)
@@ -950,5 +921,3 @@ summary(lm(coa_diffsel[coa_diffsel$scenario != "0,-1",]$diff ~
              coa_diffsel[coa_diffsel$scenario != "0,-1",]$coa2
 ))
 ```
-
-
