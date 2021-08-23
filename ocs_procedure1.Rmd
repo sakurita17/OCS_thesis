@@ -1,5 +1,5 @@
 ---
-title: "Optimum Contribution Selection - OCS"
+title: "Optimal Contribution Selection - OCS"
 output: html_document
 ---
 
@@ -33,6 +33,7 @@ library(remotes)
 library(ComplexHeatmap)
 ```
 ## Data description
+
 Pedigree
 animal: Integer variable. Identification of each animal.
 sire: Integer variable. Identification number of the father. 
@@ -522,7 +523,7 @@ ggpubr::ggarrange(plot1,plot2,
 #  width=13,height=2*3,dpi=300)
 
 ```
-## Uncertenty
+## Uncertainty
 
 ```{r}
 uncer <- function(ex){
@@ -1034,12 +1035,6 @@ summary(lm(coa_diffsel[coa_diffsel$scenario != "0,-1",]$diff ~
 
 This is an R Markdown format used for publishing markdown documents to GitHub. When you click the **Knit** button all R code chunks are run and a markdown file (.md) suitable for publishing to GitHub is generated.
 
-## Including Code
 
-You can include R code in the document as follows:
-
-```{r cars}
-summary(cars)
-```
 
 
